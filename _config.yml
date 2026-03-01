@@ -1,0 +1,15 @@
+title: Bálint Décsi
+description: Data Engineer & Builder — Personal Portfolio
+url: "https://balintdecsi.github.io"
+baseurl: ""
+
+markdown: kramdown
+kramdown:
+  input: GFM
+
+permalink: pretty
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
