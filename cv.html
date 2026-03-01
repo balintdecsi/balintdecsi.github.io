@@ -3,11 +3,19 @@ layout: default
 title: CV
 ---
 
-<h1 class="page-title">Curriculum Vitae</h1>
-<p class="page-description">My professional background and education.</p>
-<a class="cv-download" href="{{ '/assets/documents/Balint_Decsi_CV.pdf' | relative_url }}" download>
+<button class="cv-download" id="cv-download" type="button">
   &#11015; Download PDF
-</a>
+</button>
+
+<div id="cv-content">
+
+<h1 class="cv-name">Bálint Décsi</h1>
+<p class="cv-contact">
+  <a href="mailto:balint.decsi@gmail.com">balint.decsi@gmail.com</a> &middot;
+  <a href="https://www.linkedin.com/in/balintdecsi4b6b53183">LinkedIn</a> &middot;
+  <a href="https://github.com/balintdecsi">GitHub</a> &middot;
+  Vienna, Austria
+</p>
 
 <section class="cv-section">
   <h2>Experience</h2>
@@ -143,7 +151,7 @@ title: CV
 
 <section class="cv-section">
   <h2>Certifications</h2>
-  <ul style="padding-left: 1.2rem; color: var(--color-text-secondary);">
+  <ul class="cv-plain-list">
     <li>Generative AI Fundamentals</li>
     <li>Launching into Machine Learning</li>
     <li>Modernizing Data Lakes and Data Warehouses with Google Cloud</li>
@@ -154,7 +162,7 @@ title: CV
 
 <section class="cv-section">
   <h2>Awards &amp; Scholarships</h2>
-  <ul style="padding-left: 1.2rem; color: var(--color-text-secondary);">
+  <ul class="cv-plain-list">
     <li>Highlighted Study Scholarship of the Hungarian State</li>
     <li>Municipal Scholarship of Szeged</li>
     <li>Campus Mundi Scholarship</li>
@@ -162,3 +170,30 @@ title: CV
     <li>Data Rockstar</li>
   </ul>
 </section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
+<script>
+  document.getElementById('cv-download').addEventListener('click', function() {
+    var el = document.getElementById('cv-content');
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Generating…';
+    html2pdf()
+      .set({
+        margin:       [12, 14, 12, 14],
+        filename:     'Balint_Decsi_CV.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+      })
+      .from(el)
+      .save()
+      .then(function() {
+        btn.disabled = false;
+        btn.innerHTML = '&#11015; Download PDF';
+      });
+  });
+</script>
