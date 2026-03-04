@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF to Word — Bálint Décsi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #fafafa;
+      --color-surface: #ffffff;
+      --color-text: #1a1a2e;
+      --color-text-secondary: #555770;
+      --color-accent: #2563eb;
+      --color-accent-hover: #1d4ed8;
+      --color-border: #e2e4e9;
+      --color-tag-bg: #f0f4ff;
+      --color-tag-text: #2563eb;
+      --color-error: #dc2626;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --max-width: 720px;
+      --radius: 8px;
+    }
+
+    [data-theme="dark"] {
+      --color-bg: #121220;
+      --color-surface: #1a1a2e;
+      --color-text: #e4e4ef;
+      --color-text-secondary: #9e9eb8;
+      --color-accent: #5b8def;
+      --color-accent-hover: #7da8ff;
+      --color-border: #2a2a40;
+      --color-tag-bg: #1e2844;
+      --color-tag-text: #7da8ff;
+      --color-error: #f87171;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--color-text);
+      background: var(--color-bg);
+      line-height: 1.7;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface);
+    }
+
+    .nav-container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--color-text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-logo:hover { color: var(--color-accent); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-right a {
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+    .nav-right a:hover { color: var(--color-text); }
+
+    .theme-toggle {
+      all: unset;
+      cursor: pointer;
+      width: 2.2rem;
+      height: 2.2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      color: var(--color-text-secondary);
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+    .theme-toggle:hover {
+      border-color: var(--color-accent);
+      background: var(--color-tag-bg);
+      color: var(--color-accent);
+    }
+
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-description {
+      color: var(--color-text-secondary);
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+    }
+
+    .upload-area {
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: var(--color-surface);
+      margin-bottom: 1.5rem;
+    }
+    .upload-area:hover,
+    .upload-area.drag-over {
+      border-color: var(--color-accent);
+      background: var(--color-tag-bg);
+    }
+
+    .upload-area .icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .upload-area p {
+      color: var(--color-text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .upload-area .file-name {
+      margin-top: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--color-accent);
+      word-break: break-all;
+    }
+
+    .options {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+    }
+
+    .options label {
+      font-size: 0.95rem;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .options input[type="checkbox"] {
+      width: 1.1rem;
+      height: 1.1rem;
+      accent-color: var(--color-accent);
+      cursor: pointer;
+    }
+
+    .options .hint {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+    }
+
+    .btn {
+      all: unset;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.5rem;
+      background: var(--color-accent);
+      color: #fff;
+      border-radius: var(--radius);
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: var(--color-accent-hover); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .status {
+      margin-top: 1.25rem;
+      font-size: 0.95rem;
+    }
+    .status.error { color: var(--color-error); }
+    .status.success { color: var(--color-accent); }
+
+    .spinner {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid var(--color-border);
+      border-top-color: var(--color-accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .how-it-works {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--color-border);
+    }
+
+    .how-it-works h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .step {
+      padding: 1.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background: var(--color-surface);
+    }
+
+    .step .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      background: var(--color-tag-bg);
+      color: var(--color-tag-text);
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .step p {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+    }
+
+    footer {
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface);
+      margin-top: auto;
+    }
+    .footer-container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .footer-copy {
+      color: var(--color-text-secondary);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.75rem; }
+      main { padding: 2rem 1rem; }
+      .upload-area { padding: 2rem 1rem; }
+      .steps { grid-template-columns: 1fr; }
+    }
+  </style>
+  <script>
+    (function() {
+      var saved = localStorage.getItem('theme');
+      if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <header>
+    <nav class="nav-container">
+      <a href="/" class="nav-logo">BD</a>
+      <div class="nav-right">
+        <a href="/">About</a>
+        <a href="/projects/">Projects</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark mode">&#9790;</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1>PDF to Word for TTS</h1>
+    <p class="page-description">
+      Upload a scanned PDF and download a clean Word document ready for
+      text-to-speech. Optimised for Hungarian OCR output.
+    </p>
+
+    <form id="upload-form" enctype="multipart/form-data">
+      <div class="upload-area" id="drop-zone">
+        <span class="icon">&#128196;</span>
+        <p>Drag &amp; drop a PDF here, or click to browse</p>
+        <div class="file-name" id="file-name"></div>
+        <input type="file" id="file-input" name="pdf" accept=".pdf" hidden>
+      </div>
+
+      <div class="options">
+        <label>
+          <input type="checkbox" name="column_detection" id="column-detect">
+          Column detection
+        </label>
+        <span class="hint">Use left/right column heuristic for two-column scanned layouts</span>
+      </div>
+
+      <button type="submit" class="btn" id="convert-btn" disabled>Convert to Word</button>
+      <div class="status" id="status"></div>
+    </form>
+
+    <section class="how-it-works">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <p><strong>Upload</strong> a scanned PDF with an embedded text layer.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <p><strong>Extract</strong> text blocks using PyMuPDF, optionally filtering by column position.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <p><strong>Clean</strong> OCR artefacts with Hungarian-specific corrections.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <p><strong>Download</strong> a Word file optimised for Read Aloud / TTS.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-container">
+      <p class="footer-copy">&copy; 2025 Bálint Décsi</p>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      var btn = document.getElementById('theme-toggle');
+      function updateIcon() {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        btn.textContent = isDark ? '\u2600' : '\u263E';
+      }
+      updateIcon();
+      btn.addEventListener('click', function() {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.setItem('theme', 'light');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+        }
+        updateIcon();
+      });
+    })();
+
+    (function() {
+      var dropZone = document.getElementById('drop-zone');
+      var fileInput = document.getElementById('file-input');
+      var fileName  = document.getElementById('file-name');
+      var convertBtn = document.getElementById('convert-btn');
+      var form = document.getElementById('upload-form');
+      var status = document.getElementById('status');
+
+      dropZone.addEventListener('click', function() { fileInput.click(); });
+
+      dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+      });
+      dropZone.addEventListener('dragleave', function() {
+        dropZone.classList.remove('drag-over');
+      });
+      dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        if (e.dataTransfer.files.length && e.dataTransfer.files[0].name.toLowerCase().endsWith('.pdf')) {
+          fileInput.files = e.dataTransfer.files;
+          onFileSelected();
+        }
+      });
+
+      fileInput.addEventListener('change', onFileSelected);
+
+      function onFileSelected() {
+        if (fileInput.files.length) {
+          fileName.textContent = fileInput.files[0].name;
+          convertBtn.disabled = false;
+          status.textContent = '';
+          status.className = 'status';
+        }
+      }
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!fileInput.files.length) return;
+
+        convertBtn.disabled = true;
+        status.className = 'status';
+        status.innerHTML = '<span class="spinner"></span> Converting…';
+
+        var fd = new FormData();
+        fd.append('pdf', fileInput.files[0]);
+        if (document.getElementById('column-detect').checked) {
+          fd.append('column_detection', 'on');
+        }
+
+        fetch('/convert', { method: 'POST', body: fd })
+          .then(function(res) {
+            if (!res.ok) return res.text().then(function(t) { throw new Error(t); });
+            return res.blob().then(function(blob) {
+              var cd = res.headers.get('Content-Disposition') || '';
+              var match = cd.match(/filename="?([^";]+)"?/);
+              var name = match ? match[1] : 'output_tts.docx';
+              var a = document.createElement('a');
+              a.href = URL.createObjectURL(blob);
+              a.download = name;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              status.className = 'status success';
+              status.textContent = 'Done — your download should start automatically.';
+              convertBtn.disabled = false;
+            });
+          })
+          .catch(function(err) {
+            status.className = 'status error';
+            status.textContent = 'Error: ' + err.message;
+            convertBtn.disabled = false;
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
