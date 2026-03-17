@@ -160,6 +160,22 @@ a:hover {
 /* Hero / About */
 .hero {
   margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.hero-content {
+  flex: 1;
+}
+
+.profile-img {
+  width: 160px;
+  height: auto;
+  border-radius: var(--radius);
+  object-fit: contain;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
 }
 
 .hero h1 {
@@ -247,6 +263,58 @@ a:hover {
 }
 
 /* CV page */
+.cv-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.cv-header-content {
+  flex: 1;
+}
+
+.cv-profile-img {
+  width: 120px;
+  height: auto;
+  border-radius: var(--radius);
+  object-fit: contain;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+/* Force light theme for PDF generation */
+.force-light {
+  --color-bg: #ffffff !important;
+  --color-surface: #ffffff !important;
+  --color-text: #1a1a2e !important;
+  --color-text-secondary: #555770 !important;
+  --color-border: #e2e4e9 !important;
+  --color-tag-bg: #f0f4ff !important;
+  --color-tag-text: #2563eb !important;
+  background: var(--color-bg) !important;
+  color: var(--color-text) !important;
+}
+
+.force-light .cv-entry {
+  border-left-color: var(--color-border) !important;
+}
+
+.force-light .cv-tag {
+  background: var(--color-tag-bg) !important;
+  color: var(--color-tag-text) !important;
+}
+
+.force-light .cv-section h2 {
+  border-bottom-color: var(--color-border) !important;
+}
+
+.force-light .cv-meta, 
+.force-light .cv-contact,
+.force-light .cv-entry ul {
+  color: var(--color-text-secondary) !important;
+}
+
 .cv-name {
   font-size: 1.6rem;
   font-weight: 700;
@@ -460,8 +528,34 @@ a:hover {
 
 /* Responsive */
 @media (max-width: 600px) {
+  .hero {
+    flex-direction: column-reverse;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .hero p {
+    margin: 0 auto;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+
   .hero h1 {
     font-size: 1.75rem;
+  }
+
+  .cv-header {
+    flex-direction: column-reverse;
+    gap: 1rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .cv-profile-img {
+    width: 80px;
+    height: 80px;
   }
 
   .nav-links {

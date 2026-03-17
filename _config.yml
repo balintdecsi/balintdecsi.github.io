@@ -1,15 +1,23 @@
 title: Bálint Décsi
 description: Data Engineer & Builder — Personal Portfolio
 url: "https://balintdecsi.github.io"
-baseurl: ""
+baseurl: "" # set this if your site is in a subdirectory
+
+plugins:
+  - github-pages
+  - jekyll-relative-links
 
 markdown: kramdown
 kramdown:
   input: GFM
 
-permalink: pretty
+permalink: /:title/
 
 exclude:
   - README.md
   - Gemfile
   - Gemfile.lock
+  - vendor/
+  - .bundle/
+  - .jekyll-cache/
+  - tools/
