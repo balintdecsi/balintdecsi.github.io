@@ -315,6 +315,16 @@ a:hover {
   color: var(--color-text-secondary) !important;
 }
 
+.force-light .cv-tags {
+  /* html2pdf can split flex rows awkwardly; inline flow is more stable. */
+  display: block;
+}
+
+.force-light .cv-tag {
+  /* Recreate spacing previously provided by flex `gap`. */
+  margin: 0 0.5rem 0.5rem 0;
+}
+
 .cv-name {
   font-size: 1.6rem;
   font-weight: 700;
@@ -326,10 +336,27 @@ a:hover {
   font-size: 0.9rem;
   color: var(--color-text-secondary);
   margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
 }
 
 .cv-contact a {
   color: var(--color-accent);
+}
+
+.cv-location {
+  margin-top: 0.25rem;
+}
+
+.cv-entry,
+.cv-section,
+.cv-tags,
+.cv-plain-list li {
+  /* Helps html2pdf avoid splitting tag/list blocks mid-item. */
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .cv-plain-list {

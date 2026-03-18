@@ -13,11 +13,11 @@ title: CV
   <div class="cv-header-content">
     <h1 class="cv-name">Bálint Décsi</h1>
     <p class="cv-contact">
-      <a href="mailto:balint.decsi@gmail.com">balint.decsi@gmail.com</a> &middot;
-      <a href="https://balintdecsi.github.io">balintdecsi.github.io</a> &middot;
-      <a href="https://www.linkedin.com/in/balintdecsi4b6b53183">LinkedIn</a> &middot;
-      <a href="https://github.com/balintdecsi">GitHub</a> &middot;
-      Vienna, Austria
+      <a href="mailto:balint.decsi@gmail.com">balint.decsi@gmail.com</a>
+      <a href="https://balintdecsi.github.io">balintdecsi.github.io</a>
+      <a href="https://www.linkedin.com/in/balintdecsi4b6b53183">LinkedIn</a>
+      <a href="https://github.com/balintdecsi">GitHub</a>
+      <span class="cv-location">Vienna, Austria / Budapest, Hungary</span>
     </p>
   </div>
   <img src="{{ '/assets/pictures/profile.jpg' | relative_url }}" alt="Bálint Décsi" class="cv-profile-img">
@@ -219,7 +219,7 @@ title: CV
     
     html2pdf()
       .set({
-        margin:       [12, 14, 12, 14],
+        margin:       [12, 14, 16, 14],
         filename:     'Balint_Decsi_CV.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
