@@ -20,4 +20,3 @@ exclude:
   - vendor/
   - .bundle/
   - .jekyll-cache/
-  - tools/
