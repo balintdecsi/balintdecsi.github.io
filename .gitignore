@@ -9,4 +9,3 @@ vendor/
 .venv/
 __pycache__/
 *.pyc
-tools/pdf-to-word/uploads/
