@@ -5,3 +5,8 @@ _site/
 .bundle/
 vendor/
 nohup.out
+
+# Python
+.venv/
+__pycache__/
+*.pyc
